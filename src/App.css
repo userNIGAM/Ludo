@@ -1,0 +1,16 @@
+@import "tailwindcss";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.ludo {
+  width: min(700px, 90vw);
+  height: min(700px, 90vh);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Ensures it stays in place */
+  margin: auto; /* Center the board */
+  border: 1px solid black;
+}

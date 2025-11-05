@@ -1,0 +1,124 @@
+.ludo-board {
+  width: min(700px, 90vw);
+  height: min(700px, 90vh);
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  grid-template-rows: repeat(15, 1fr);
+  border: 4px solid black;
+  position: relative;
+}
+
+.ludo-cell {
+  border: 1px solid #9ca3af; /* Darker border for clarity */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.red-zone {
+  background-color: #ef4444;
+}
+.green-zone {
+  background-color: #22c55e;
+}
+.yellow-zone {
+  background-color: #facc15;
+}
+.blue-zone {
+  background-color: #3b82f6;
+}
+
+.safe-spot {
+  background-color: #fcd34d;
+  border: 2px solid black;
+}
+
+.home-field {
+  background-color: #374151;
+  color: white;
+}
+
+.red-home {
+  background-color: #ef4444;
+}
+.green-home {
+  background-color: #22c55e;
+}
+.yellow-home {
+  background-color: #facc15;
+}
+.blue-home {
+  background-color: #3b82f6;
+}
+
+.token {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  position: absolute;
+  border: 2px solid black;
+  cursor: pointer;
+  z-index: 10; /* Ensuring tokens appear above the board */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.red-token {
+  background-color: red;
+}
+.green-token {
+  background-color: green;
+}
+.yellow-token {
+  background-color: yellow;
+}
+.blue-token {
+  background-color: blue;
+}
+
+.base-area {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 2px solid black;
+  border-radius: 10px;
+}
+
+.red-base {
+  top: 10px;
+  left: 10px;
+}
+.blue-base {
+  top: 10px;
+  right: 10px;
+}
+.yellow-base {
+  bottom: 10px;
+  left: 10px;
+}
+.green-base {
+  bottom: 10px;
+  right: 10px;
+}
+
+.dice-button {
+  margin-top: 10px;
+  padding: 10px 15px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #1e3a8a;
+  color: white;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.dice-button:hover {
+  background-color: #1d4ed8;
+}
