@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-// import GameInfoPanel from "./GameInfoPanel";
 import GameBoard from "./GameBoard";
 import DiceCorner from "./DiceCorner";
 import WinnerPopup from "./WinnerPopup";
-// import TurnIndicator from "./TurnIndicator";
 
 // 🧠 Import shared logic & data
 import {
@@ -21,10 +19,10 @@ import {
 export default function LudoBoard() {
   // 🎲 Game state
   const [tokens, setTokens] = useState({
-    red: [32, 33, 47, 48],
-    blue: [41, 42, 56, 57],
-    yellow: [167, 168, 182, 183],
-    green: [176, 177, 191, 192],
+    red: [31, 34, 46, 49],
+    blue: [40, 43, 55, 58],
+    green: [166, 169, 181, 184],
+    yellow: [175, 178, 190, 193],
   });
 
   const [currentPlayer, setCurrentPlayer] = useState("red");
@@ -42,18 +40,20 @@ export default function LudoBoard() {
 
     let rolls = 0;
     const maxRolls = 8;
+    let finalValue = 1;
 
     const rollInterval = setInterval(() => {
-      setDice(rollDiceValue());
+      const tempValue = rollDiceValue();
+      setDice(tempValue);
       rolls++;
+
       if (rolls >= maxRolls) {
         clearInterval(rollInterval);
-        setIsRolling(false);
-
-        const finalValue = rollDiceValue();
+        finalValue = rollDiceValue(); // Get one final random value
         setDice(finalValue);
 
         setTimeout(() => {
+          setIsRolling(false);
           if (!hasValidMove(tokens, currentPlayer, finalValue)) {
             // No valid moves → next player
             setDice(null);
@@ -66,7 +66,17 @@ export default function LudoBoard() {
 
   // 🧩 Handle token movement
   const moveToken = (color, index) => {
-    if (color !== currentPlayer || dice === null || winner || isRolling) return;
+    if (color !== currentPlayer || dice === null || winner || isRolling) {
+      console.log(`Cannot move: ${color} token ${index}`, {
+        currentPlayer,
+        dice,
+        winner,
+        isRolling,
+      });
+      return;
+    }
+
+    console.log(`Attempting to move ${color} token ${index} with dice ${dice}`);
 
     const newTokens = moveTokenPosition(tokens, color, index, dice);
     setTokens(newTokens);
@@ -78,7 +88,9 @@ export default function LudoBoard() {
 
     // Handle next turn
     setTimeout(() => {
-      if (dice !== 6) setCurrentPlayer(nextPlayer(currentPlayer));
+      if (dice !== 6) {
+        setCurrentPlayer(nextPlayer(currentPlayer));
+      }
       setDice(null);
     }, 300);
   };
@@ -112,16 +124,6 @@ export default function LudoBoard() {
 
       {/* Main Layout */}
       <div className="flex gap-8 items-start">
-        {/* <GameInfoPanel
-          playerColors={playerColors}
-          tokens={tokens}
-          currentPlayer={currentPlayer}
-          isRolling={isRolling}
-          winner={winner}
-          rollDice={rollDice}
-          resetGame={resetGame}
-        /> */}
-
         <GameBoard
           tokens={tokens}
           moveToken={moveToken}
@@ -149,11 +151,6 @@ export default function LudoBoard() {
       <AnimatePresence>
         {winner && <WinnerPopup winner={winner} resetGame={resetGame} />}
       </AnimatePresence>
-
-      {/* Turn Indicator */}
-      {/* {gameStarted && !winner && (
-        <TurnIndicator currentPlayer={currentPlayer} dice={dice} />
-      )} */}
     </div>
   );
 }
