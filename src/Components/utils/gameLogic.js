@@ -12,13 +12,13 @@ export const paths = {
     125, 124, 123, 122, 121, 120, 105, 90, 91, 92, 93, 94, 95, 81, 66, 51, 36,
     21, 6, 7, 22, 37, 52, 67, 82, 97, 112,
   ],
-  green: [
+  yellow: [
     133, 132, 131, 130, 129, 143, 158, 173, 188, 203, 218, 217, 216, 201, 186,
     171, 156, 141, 125, 124, 123, 122, 121, 120, 105, 90, 91, 92, 93, 94, 95,
     81, 66, 51, 36, 21, 6, 7, 8, 23, 38, 53, 68, 83, 99, 100, 101, 102, 103,
     104, 119, 118, 117, 116, 115, 114, 113, 112,
   ],
-  yellow: [
+  green: [
     201, 186, 171, 156, 141, 125, 124, 123, 122, 121, 120, 105, 90, 91, 92, 93,
     94, 95, 81, 66, 51, 36, 21, 6, 7, 8, 23, 38, 53, 68, 83, 99, 100, 101, 102,
     103, 104, 119, 134, 133, 132, 131, 130, 129, 143, 158, 173, 188, 203, 218,
@@ -28,17 +28,17 @@ export const paths = {
 
 export const homePositions = {
   red: [31, 34, 46, 49],
-  blue: [40, 42, 55, 58],
+  blue: [40, 43, 55, 58],
   green: [166, 169, 181, 184],
   yellow: [175, 178, 190, 193],
 };
 
 // 🏁 Final winning positions (the actual home cells)
 export const winningPositions = {
-  red: [31, 34, 46, 49],
-  blue: [40, 42, 55, 58],
-  green: [166, 169, 181, 184],
-  yellow: [175, 178, 190, 193],
+  red: [106, 107, 108, 109, 110, 111],
+  blue: [22, 37, 52, 67, 82, 97],
+  green: [202, 187, 172, 157, 142, 127],
+  yellow: [118, 117, 116, 115, 114, 113],
 };
 
 // 🛡️ Safe zones where tokens cannot be captured
@@ -175,13 +175,13 @@ export function hasValidMove(tokens, color, dice) {
   const path = paths[color];
   const currentTokens = tokens[color];
   const home = homePositions[color];
-  const lastCell = path[path.length - 1];
+  // const lastCell = path[path.length - 1];
 
   return currentTokens.some((pos, index) => {
     // Token is already in final home position - cannot move
-    if (home.includes(pos) && pos !== lastCell) {
-      return false;
-    }
+    // if (home.includes(pos) && pos !== lastCell) {
+    //   return false;
+    // }
 
     // Token is in home - can only move on 6
     if (home.includes(pos)) {
@@ -217,13 +217,13 @@ export function moveTokenPosition(tokens, color, index, dice) {
   const home = homePositions[color];
   const currentPos = newTokens[color][index];
   const start = path[0];
-  const lastCell = path[path.length - 1];
+  // const lastCell = path[path.length - 1];
 
-  // Don't move tokens that are already in home positions
-  if (home.includes(currentPos) && currentPos !== lastCell) {
-    console.log(`Token already in home position: ${currentPos}`);
-    return newTokens;
-  }
+  // // Don't move tokens that are already in home positions
+  // if (home.includes(currentPos) && currentPos !== lastCell) {
+  //   console.log(`Token already in home position: ${currentPos}`);
+  //   return newTokens;
+  // }
 
   // From home → onto start (only on 6)
   if (home.includes(currentPos)) {

@@ -19,10 +19,10 @@ import {
 export default function LudoBoard() {
   // 🎲 Game state
   const [tokens, setTokens] = useState({
-    red: [31, 34, 46, 49],
-    blue: [40, 43, 55, 58],
-    green: [166, 169, 181, 184],
-    yellow: [175, 178, 190, 193],
+    red: homePositions.red,
+    blue: homePositions.blue,
+    yellow: homePositions.yellow,
+    green: homePositions.green,
   });
 
   const [currentPlayer, setCurrentPlayer] = useState("red");
@@ -30,8 +30,9 @@ export default function LudoBoard() {
   const [isRolling, setIsRolling] = useState(false);
   const [winner, setWinner] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
+  const [hasRolledSix, setHasRolledSix] = useState(false);
 
-  // 🎯 Handle dice roll animation and logic
+  // 🎯 Handle dice roll animation and logic - FIXED
   const rollDice = () => {
     if (winner || isRolling) return;
 
@@ -40,7 +41,6 @@ export default function LudoBoard() {
 
     let rolls = 0;
     const maxRolls = 8;
-    let finalValue = 1;
 
     const rollInterval = setInterval(() => {
       const tempValue = rollDiceValue();
@@ -49,22 +49,42 @@ export default function LudoBoard() {
 
       if (rolls >= maxRolls) {
         clearInterval(rollInterval);
-        finalValue = rollDiceValue(); // Get one final random value
+        const finalValue = rollDiceValue();
         setDice(finalValue);
 
         setTimeout(() => {
           setIsRolling(false);
+
+          // If player rolled a 6, they get another turn
+          if (finalValue === 6) {
+            setHasRolledSix(true);
+            console.log(
+              `🎲 ${currentPlayer} rolled a 6! They get another turn.`
+            );
+          }
+
+          // Check if no valid moves
           if (!hasValidMove(tokens, currentPlayer, finalValue)) {
-            // No valid moves → next player
+            console.log(
+              `❌ No valid moves for ${currentPlayer} with dice ${finalValue}`
+            );
             setDice(null);
-            setCurrentPlayer(nextPlayer(currentPlayer));
+            // Only change turn if they didn't roll a 6
+            if (finalValue !== 6) {
+              setCurrentPlayer(nextPlayer(currentPlayer));
+              setHasRolledSix(false);
+            }
+          } else {
+            console.log(
+              `✅ ${currentPlayer} has valid moves with dice ${finalValue}`
+            );
           }
         }, 600);
       }
     }, 100);
   };
 
-  // 🧩 Handle token movement
+  // 🧩 Handle token movement - FIXED
   const moveToken = (color, index) => {
     if (color !== currentPlayer || dice === null || winner || isRolling) {
       console.log(`Cannot move: ${color} token ${index}`, {
@@ -76,7 +96,7 @@ export default function LudoBoard() {
       return;
     }
 
-    console.log(`Attempting to move ${color} token ${index} with dice ${dice}`);
+    console.log(`🎯 Moving ${color} token ${index} with dice ${dice}`);
 
     const newTokens = moveTokenPosition(tokens, color, index, dice);
     setTokens(newTokens);
@@ -86,41 +106,51 @@ export default function LudoBoard() {
       setWinner(color);
     }
 
-    // Handle next turn
+    // Handle next turn - FIXED: Only change turn if not a 6
     setTimeout(() => {
-      if (dice !== 6) {
-        setCurrentPlayer(nextPlayer(currentPlayer));
+      if (dice === 6) {
+        console.log(`🔄 ${color} rolled a 6, they get another roll!`);
+        setDice(null);
+        setHasRolledSix(true);
+        // Player gets another roll, don't change turn
+      } else {
+        console.log(`🔄 Changing turn from ${color} to ${nextPlayer(color)}`);
+        setCurrentPlayer(nextPlayer(color));
+        setDice(null);
+        setHasRolledSix(false);
       }
-      setDice(null);
-    }, 300);
+    }, 500);
   };
 
   // 🔄 Reset game to initial state
   const resetGame = () => {
     setTokens({
-      red: [32, 33, 47, 48],
-      blue: [41, 42, 56, 57],
-      yellow: [167, 168, 182, 183],
-      green: [176, 177, 191, 192],
+      red: homePositions.red,
+      blue: homePositions.blue,
+      yellow: homePositions.yellow,
+      green: homePositions.green,
     });
     setCurrentPlayer("red");
     setDice(null);
     setWinner(null);
     setGameStarted(false);
+    setHasRolledSix(false);
   };
 
   // 🧱 UI
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
       {/* Header */}
-      <div className="text-center mb-6">
+      {/* <div className="text-center mb-6">
         <h1 className="text-5xl font-bold text-white mb-2 tracking-wider">
           🎲 LUDO KING
         </h1>
         <p className="text-gray-300">
           Roll the dice and be the first to get all tokens home!
-        </p>
-      </div>
+        </p> */}
+
+      {/* Game Status */}
+      {/* </div> */}
 
       {/* Main Layout */}
       <div className="flex gap-8 items-start">

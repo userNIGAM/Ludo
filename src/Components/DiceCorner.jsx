@@ -11,11 +11,11 @@ export default function DiceCorner({
   playerColors,
 }) {
   const positions = {
-    red: "top-6 left-6",
-    blue: "top-6 right-6",
+    red: "top-15 left-66",
+    blue: "top-16 right-66",
 
-    green: "bottom-6 left-6",
-    yellow: "bottom-6 right-6",
+    green: "bottom-16 left-66",
+    yellow: "bottom-16 right-66",
   };
   const isActive = currentPlayer === color;
 

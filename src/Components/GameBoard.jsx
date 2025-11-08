@@ -1,7 +1,14 @@
 import { motion } from "framer-motion";
 import Token from "./Token";
+import { LudoWinningCell } from "./LudoWinningCell";
 
-export default function GameBoard({ tokens, moveToken, playerColors }) {
+export default function GameBoard({
+  tokens,
+  moveToken,
+  playerColors,
+  currentPlayer,
+  diceRolled,
+}) {
   // 15×15 grid = 225 cells (indexes 0–224)
   const gridSize = 15;
 
@@ -36,15 +43,15 @@ export default function GameBoard({ tokens, moveToken, playerColors }) {
 
   // 🧭 Helper: colorize cells
   const getCellColor = (index) => {
-    if (redHome.includes(index)) return "bg-red-500/80";
-    if (greenHome.includes(index)) return "bg-green-500/80";
-    if (yellowHome.includes(index)) return "bg-yellow-500/80";
-    if (blueHome.includes(index)) return "bg-blue-500/80";
+    if (redHome.includes(index)) return "bg-red-600/80";
+    if (greenHome.includes(index)) return "bg-green-600/80";
+    if (yellowHome.includes(index)) return "bg-yellow-600/80";
+    if (blueHome.includes(index)) return "bg-blue-600/80";
 
-    if (redPath.includes(index)) return "bg-red-300/60";
-    if (greenPath.includes(index)) return "bg-green-300/60";
-    if (yellowPath.includes(index)) return "bg-yellow-300/60";
-    if (bluePath.includes(index)) return "bg-blue-300/60";
+    if (redPath.includes(index)) return "bg-red-500/100";
+    if (greenPath.includes(index)) return "bg-green-500/100";
+    if (yellowPath.includes(index)) return "bg-yellow-500/100";
+    if (bluePath.includes(index)) return "bg-blue-500/100";
 
     if (safeZones.includes(index)) return "bg-white";
     return "bg-amber-800/30";
@@ -61,19 +68,14 @@ export default function GameBoard({ tokens, moveToken, playerColors }) {
       );
     }
 
-    // 🎯 Center
-    if (index === 112) {
-      return (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="relative w-16 h-16">
-            {/* 4 triangles */}
-            <div className="absolute inset-0 clip-triangle-top bg-red-500"></div>
-            <div className="absolute inset-0 clip-triangle-right bg-green-500"></div>
-            <div className="absolute inset-0 clip-triangle-bottom bg-yellow-400"></div>
-            <div className="absolute inset-0 clip-triangle-left bg-blue-500"></div>
-          </div>
-        </div>
-      );
+    // 🎯 Winning cells
+
+    // 🎯 Center (Winning Cell)
+    if ([111, 97, 113, 127].includes(index)) {
+      if (index === 97) return <LudoWinningCell direction="right" />; // Left base, points to center
+      if (index === 111) return <LudoWinningCell direction="down" />; // Top base, points to center
+      if (index === 113) return <LudoWinningCell direction="up" />; // Bottom base, points to center
+      if (index === 27) return <LudoWinningCell direction="left" />;
     }
 
     return null;
@@ -86,35 +88,38 @@ export default function GameBoard({ tokens, moveToken, playerColors }) {
           <motion.div
             key={index}
             className={`
-              relative border border-amber-700/40 flex items-center justify-center 
-              ${getCellColor(index)}
-              ${safeZones.includes(index) ? "border-2 border-yellow-400" : ""}
-              transition-all duration-200
-            `}
+    relative border border-amber-700/40 flex items-center justify-center 
+    ${getCellColor(index)}
+    ${safeZones.includes(index) ? "border-2 border-yellow-400" : ""}
+    aspect-square transition-all duration-200
+  `}
             whileHover={{ scale: 1.04 }}
             transition={{ type: "spring", stiffness: 250, damping: 18 }}
           >
-            {/* 🧮 Show cell number */}
             <div className="absolute top-0 left-0 text-[8px] text-white/60 p-0.5 select-none">
               {index}
             </div>
             {getCellContent(index)}
 
-            {/* Tokens */}
-            {Object.entries(tokens).map(([color, positions]) =>
-              positions.map(
-                (pos, i) =>
-                  pos === index && (
-                    <Token
-                      key={`${color}-${i}`}
-                      color={color}
-                      index={i}
-                      onClick={() => moveToken(color, i)}
-                      playerColors={playerColors}
-                    />
-                  )
-              )
-            )}
+            {/* Tokens — fixed layout version */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {Object.entries(tokens).map(([color, positions]) =>
+                positions.map(
+                  (pos, i) =>
+                    pos === index && (
+                      <Token
+                        key={`${color}-${i}`}
+                        color={color}
+                        index={i}
+                        onClick={() => moveToken(color, i)}
+                        playerColors={playerColors}
+                        isCurrentPlayer={color === currentPlayer}
+                        canMove={diceRolled && color === currentPlayer}
+                      />
+                    )
+                )
+              )}
+            </div>
           </motion.div>
         ))}
 
